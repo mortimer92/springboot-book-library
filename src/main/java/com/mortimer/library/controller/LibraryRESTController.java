@@ -23,9 +23,9 @@ public class LibraryRESTController {
     public List<BookResponse> getAllBooks(){
         return libraryService.getBookList();
     }
-    @GetMapping("/find{name}")
-    public ResponseEntity<List<BookResponse>> getBooksByName(@RequestParam("name") String name){
-        return libraryService.findBooksByName(name);
+    @GetMapping("/nameorauthor")
+    public ResponseEntity<List<BookResponse>> getBooksByName(@RequestParam String name, @RequestParam String author ){
+        return libraryService.findBooks(name, author);
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -33,5 +33,9 @@ public class LibraryRESTController {
         libraryService.saveBook(bookRequest);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteBook(@PathVariable Long id){
+        libraryService.deleteBook(id);
+    }
 
 }

@@ -37,21 +37,27 @@ public class LibraryService {
                 }).collect(Collectors.toList());
         return allBooks;
     }
-    public ResponseEntity<List<BookResponse>> findBooksByName(String name){
-        Optional<List<Book>> booksByName = libRepository.findByNameContainingIgnoreCase(name.toLowerCase());
-        if(!booksByName.isEmpty()){
-            List<BookResponse> mappedBooks = booksByName.get().stream().map(book -> {
-                                                BookResponse response = new BookResponse();
-                                                response.setName(book.getName());
-                                                response.setAuthor(book.getAuthor());
-                                                return response;
-                                                }).collect(Collectors.toList());
+    public ResponseEntity<List<BookResponse>> findBooks(String name, String author){
+        System.out.println(libRepository.findByNameContainingOrAuthorContainingAllIgnoringCase(name.toLowerCase(), author.toLowerCase()));
+
+        Optional<List<Book>> books = libRepository.findByNameContainingOrAuthorContainingAllIgnoringCase(name.toLowerCase(), author.toLowerCase());
+        if(!books.isEmpty()){
+            List<BookResponse> mappedBooks = books.get().stream().map(book -> {
+                BookResponse response = new BookResponse();
+                response.setName(book.getName());
+                response.setAuthor(book.getAuthor());
+                return response;
+            }).collect(Collectors.toList());
 
             ResponseEntity<List<BookResponse>> responseEntity = new ResponseEntity<>(mappedBooks, HttpStatus.OK);
+
             return responseEntity;
         }else{
             throw new NoSuchElementException();
         }
     }
 
+    public void deleteBook(Long id) {
+        libRepository.deleteById(id);
+    }
 }
